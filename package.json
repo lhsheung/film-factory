@@ -1,10 +1,11 @@
 {
-  "name": "jiduo-tong-feilin",
-  "productName": "几多筒菲林",
+  "name": "film-factory",
+  "productName": "菲林工厂",
   "version": "0.1.0",
-  "description": "几多筒菲林 — Windows 光谱胶片与暗房工作台",
+  "description": "Film Factory（菲林工厂）— Windows 光谱胶片与暗房工作台",
   "main": "src/main.js",
   "bin": {
+    "filmfactory": "bin/jdtfl.js",
     "jdtfl": "bin/jdtfl.js"
   },
   "license": "GPL-3.0-or-later",
@@ -27,5 +28,6 @@
   },
   "dependencies": {
     "sharp": "^0.35.5"
-  }
+  },
+  "author": "Lau Hing Sheung"
 }

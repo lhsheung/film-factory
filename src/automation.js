@@ -97,7 +97,7 @@ async function handleMcpRequest(engine, request) {
       return respond({
         protocolVersion: "2024-11-05",
         capabilities: { tools: {}, experimental: {} },
-        serverInfo: { name: "几多筒菲林", version: "0.1.0" }
+        serverInfo: { name: "菲林工厂", version: "0.1.0" }
       });
     }
     if (method === "ping") return respond({});

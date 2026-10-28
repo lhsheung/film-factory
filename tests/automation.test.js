@@ -23,7 +23,7 @@ test("engine settings prefer explicit flags over environment variables", () => {
 test("MCP handshake exposes the render tool and rejects unknown tools", async () => {
   const bridge = new EngineBridge({ userData: "D:\\tmp", settings: {} });
   const init = await handleMcpRequest(bridge, { jsonrpc: "2.0", id: 1, method: "initialize", params: {} });
-  assert.equal(init.result.serverInfo.name, "几多筒菲林");
+  assert.equal(init.result.serverInfo.name, "菲林工厂");
   const tools = await handleMcpRequest(bridge, { jsonrpc: "2.0", id: 2, method: "tools/list" });
   assert.ok(tools.result.tools.some((tool) => tool.name === "render_raw"));
   const unknown = await handleMcpRequest(bridge, { jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "nope" } });

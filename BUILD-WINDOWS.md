@@ -92,8 +92,8 @@ Electron 的，引擎只作为子进程被调用。
 
 ## 两条必须处理的平台约束
 
-**1. 引擎只接受纯 ASCII 路径。** 打包目录名是中文（`几多筒菲林-win32-x64`），
-`%APPDATA%\几多筒菲林` 也是中文，两者都会让上游 `spk_raw_render.exe` 直接拒绝。
+**1. 引擎只接受纯 ASCII 路径。** 打包目录名是中文（`菲林工厂-win32-x64`），
+`%APPDATA%\菲林工厂` 也是中文，两者都会让上游 `spk_raw_render.exe` 直接拒绝。
 `materializeEngine()` 在解析到非 ASCII 路径时，把宿主、DLL、`resources` 镜像到
 `%ProgramData%\jdtfl-engine\engine`（不可写时退回 `%LOCALAPPDATA%`、`%TEMP%`），
 用 mtime + size 做版本戳避免重复复制；渲染作业目录也落在引擎旁的 `jobs/`。
@@ -121,7 +121,7 @@ unexpectedly: exit_code=1` 重复几次后 `FATAL: GPU process isn't usable. Goo
 | 精修层 | 曝光/对比/高光/阴影/饱和/色温/色调与旋转翻转都进入管线（不再只靠 CSS） |
 | 导出 | 普通图走本机管线；RAW 用已有光谱成片；支持 16 位宽色域 TIFF、Cineon DPX |
 | 单元测试 | 37 / 37（参数、会话、引擎桥、自动化、成像管线 21 项） |
-| 发布版 | `dist/几多筒菲林-win32-x64`（405 MB，含 `engine/`、启动器、许可证） |
+| 发布版 | `dist/菲林工厂-win32-x64`（405 MB，含 `engine/`、启动器、许可证） |
 
 发布目录里除 exe 和 `engine/`，还有 `启动.cmd`、`安全模式启动.cmd`、`使用说明.txt`、
 `THIRD-PARTY-NOTICES.txt`、`licenses/`、`BUILD-WINDOWS.md`。

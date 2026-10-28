@@ -164,8 +164,8 @@ function iccProfile(space) {
   if (!spec) throw new Error(`unknown output space '${space}'`);
   const m = rgbToXYZMatrix(space);
   const tags = [
-    tag("cprt", textType("Public domain — 几多筒菲林")),
-    tag("desc", descType(spec.name)),
+    tag("cprt", textType("Film Factory — Lau Hing Sheung")),
+    tag("desc", descType(`${spec.name} — Film Factory`)),
     tag("wtpt", xyzType(WHITES.D50)),
     tag("rXYZ", xyzType([m[0], m[3], m[6]])),
     tag("gXYZ", xyzType([m[1], m[4], m[7]])),

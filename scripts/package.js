@@ -13,6 +13,8 @@ const packager = typeof packagerModule === "function" ? packagerModule : package
 const ROOT = path.resolve(__dirname, "..");
 const OUT = process.env.JDTFL_OUT || path.join(ROOT, "dist");
 
+const PRODUCT_NAME = "菲林工厂";
+
 const IGNORE = [
   /^\/tools(\/|$)/,
   /^\/vendor(\/|$)/,
@@ -53,8 +55,8 @@ function copyEngine(targetRoot) {
 // profiles' CC BY-SA 4.0 both require the notices to travel with the program.
 function copyExtras(targetRoot) {
   const launchers = [
-    ["启动.cmd", '@echo off\r\ncd /d "%~dp0"\r\nstart "" "%~dp0几多筒菲林.exe"\r\n'],
-    ["安全模式启动.cmd", '@echo off\r\nrem 显卡驱动或远程桌面导致窗口闪退时用这个。\r\ncd /d "%~dp0"\r\nstart "" "%~dp0几多筒菲林.exe" --safe\r\n']
+    ["启动.cmd", '@echo off\r\ncd /d "%~dp0"\r\nstart "" "%~dp0菲林工厂.exe"\r\n'],
+    ["安全模式启动.cmd", '@echo off\r\nrem 显卡驱动或远程桌面导致窗口闪退时用这个。\r\ncd /d "%~dp0"\r\nstart "" "%~dp0菲林工厂.exe" --safe\r\n']
   ];
   for (const [name, body] of launchers) {
     fs.writeFileSync(path.join(targetRoot, name), body.replace(/\n/g, "\r\n"), "utf8");
@@ -66,9 +68,10 @@ function copyExtras(targetRoot) {
   const licenses = path.join(ROOT, "licenses");
   if (fs.existsSync(licenses)) fs.cpSync(licenses, path.join(targetRoot, "licenses"), { recursive: true });
   const readme = [
-    "几多筒菲林 — Windows 光谱胶片与暗房工作台",
+    "菲林工厂 (Film Factory) — Windows 光谱胶片与暗房工作台",
+    "作者：Lau Hing Sheung",
     "",
-    "启动：双击「启动.cmd」，或直接运行 几多筒菲林.exe。",
+    "启动：双击「启动.cmd」，或直接运行 菲林工厂.exe。",
     "若窗口闪退（Chromium 的 GPU 进程无法启动），改用「安全模式启动.cmd」。",
     "",
     "RAW：选中 RAW 后会自动用引擎做 81 波长光谱显影（本机 RTX 4070，24MP 约 7-8 秒）。",
@@ -85,11 +88,12 @@ function copyExtras(targetRoot) {
 (async () => {
   const built = await packager({
     dir: ROOT,
-    name: "几多筒费林".replace("费", "菲"),
+    name: PRODUCT_NAME,
     platform: "win32",
     arch: "x64",
     out: OUT,
     overwrite: !process.env.JDTFL_OUT,
+    appCopyright: "© 2026 Lau Hing Sheung",
     icon: path.join(ROOT, "assets", "icon.ico"),
     ignore: IGNORE,
     prune: true,

@@ -19,7 +19,7 @@ if (!window.darkroom) {
     chooseEngineResources: async () => ({ available: false, capabilities: {} }),
     saveSession: async () => ({}), loadSession: async () => null,
     exportPreview: async (dataUrl) => {
-      const anchor = document.createElement("a"); anchor.href = dataUrl; anchor.download = "几多筒菲林-视觉预览.png"; anchor.click();
+      const anchor = document.createElement("a"); anchor.href = dataUrl; anchor.download = "菲林工厂-视觉预览.png"; anchor.click();
       return { canceled: false };
     },
     exportEngine: async () => ({ canceled: true })

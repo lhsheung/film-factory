@@ -9,7 +9,7 @@ const {
 
 function usage() {
   return [
-    "几多筒菲林 CLI — 直接驱动 SpektraLab Windows 引擎",
+    "菲林工厂 CLI — 直接驱动 SpektraLab Windows 引擎",
     "",
     "  jdtfl capabilities [--engine-host <exe>] [--engine-resources <dir>]",
     "  jdtfl render --input <RAW> [--state params.json] [--output out.tif]",

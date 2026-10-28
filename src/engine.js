@@ -39,18 +39,28 @@ function isAscii(text) {
 }
 
 /** A writable root whose own path is pure ASCII, or null. */
+function adoptLegacyMirror(root) {
+  // The app used to be called 几多筒菲林; its mirror directory was jdtfl-engine.
+  // Rename it once instead of copying 22 MB again.
+  const legacy = path.join(path.dirname(root), "jdtfl-engine");
+  if (fs.existsSync(root) || !fs.existsSync(legacy)) return;
+  try { fs.renameSync(legacy, root); } catch (_) { /* leave it; a fresh mirror is fine */ }
+}
+
 function asciiEngineRoot() {
   const candidates = [
-    process.env.ProgramData ? path.join(process.env.ProgramData, "jdtfl-engine") : "",
-    process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "jdtfl-engine") : "",
-    path.join(os.tmpdir(), "jdtfl-engine")
+    process.env.ProgramData ? path.join(process.env.ProgramData, "filmfactory-engine") : "",
+    process.env.LOCALAPPDATA ? path.join(process.env.LOCALAPPDATA, "filmfactory-engine") : "",
+    path.join(os.tmpdir(), "filmfactory-engine")
   ].filter(Boolean);
-  return candidates.find((candidate) => isAscii(candidate)) || null;
+  const found = candidates.find((candidate) => isAscii(candidate)) || null;
+  if (found) adoptLegacyMirror(found);
+  return found;
 }
 
 /**
  * The upstream Windows host refuses any path that is not pure ASCII, so an app
- * installed under a Chinese folder name — `…\几多筒菲林-win32-x64\engine` — could
+ * installed under a Chinese folder name — `…\菲林工厂-win32-x64\engine` — could
  * never run it. When the engine sits somewhere non-ASCII, mirror it once into an
  * ASCII directory and run from there.
  */
@@ -234,7 +244,7 @@ class EngineBridge {
     }
 
     // The upstream Windows host refuses any path that is not pure ASCII, and
-    // `userData` is `…\AppData\Roaming\几多筒菲林` — the app's own name breaks it.
+    // `userData` is `…\AppData\Roaming\菲林工厂` — the app's own name breaks it.
     // The engine's own directory has to be ASCII for the host to run at all, so
     // job files live beside it.
     const jobRoot = path.join(path.dirname(resolved.hostPath), "jobs");
@@ -246,7 +256,7 @@ class EngineBridge {
       fs.mkdirSync(jobDirectory, { recursive: true });
     }
     if (!jobDirectory.split("").every((char) => char.charCodeAt(0) < 128)) {
-      throw new Error(`引擎要求作业目录只含 ASCII 字符；当前为 ${jobDirectory}。请把引擎放到纯英文字符的目录，例如 D:\\jdtfl-engine。`);
+      throw new Error(`引擎要求作业目录只含 ASCII 字符；当前为 ${jobDirectory}。请把引擎放到纯英文字符的目录，例如 D:\\filmfactory-engine。`);
     }
     const output = path.join(jobDirectory, "print.tif");
     const report = path.join(jobDirectory, "print.json");

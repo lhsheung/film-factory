@@ -13,7 +13,7 @@ const wideGamut = require("./imaging/wide-gamut");
 const { SessionStore, atomicWrite } = require("./session-store");
 const { sanitizeState } = require("./shared/params");
 
-const APP_NAME = "几多筒菲林";
+const APP_NAME = "菲林工厂";
 const projectRoot = path.resolve(__dirname, "..");
 const media = new Map();
 const STANDARD_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp"]);
@@ -147,6 +147,46 @@ function requirePhoto(id) {
   return record;
 }
 
+/**
+ * The product was called 几多筒菲林 before it was renamed. `userData` follows
+ * the app name, so without this the renamed build would start with an empty
+ * library and no edit records. Copy the parts that are user data — never the
+ * caches — once, when the new directory is still empty.
+ */
+function migrateLegacyUserData() {
+  const target = app.getPath("userData");
+  const legacy = path.join(app.getPath("appData"), "几多筒菲林");
+  if (legacy === target || !fs.existsSync(legacy)) return;
+  // Chromium creates the new directory (Cache, Local Storage…) before this
+  // runs, so "is the directory empty" is never true. The edit records are the
+  // thing that must survive, and they only exist in the old directory.
+  const targetEdits = path.join(target, "Edits");
+  if (fs.existsSync(targetEdits) && fs.readdirSync(targetEdits).length) return;
+  try {
+    fs.mkdirSync(target, { recursive: true });
+    for (const name of ["Edits", "previews"]) {
+      const from = path.join(legacy, name);
+      if (fs.existsSync(from)) fs.cpSync(from, path.join(target, name), { recursive: true });
+    }
+    // The fresh settings.json holds no library; take the old one when the new
+    // one has nothing to lose.
+    const legacySettings = path.join(legacy, "settings.json");
+    const targetSettings = path.join(target, "settings.json");
+    if (fs.existsSync(legacySettings)) {
+      let currentPaths = [];
+      try {
+        currentPaths = JSON.parse(fs.readFileSync(targetSettings, "utf8")).libraryPaths || [];
+      } catch (_) { /* no file yet */ }
+      if (!currentPaths.length) fs.copyFileSync(legacySettings, targetSettings);
+    }
+    process.stdout.write(`migrated user data from ${legacy}
+`);
+  } catch (error) {
+    process.stderr.write(`user data migration failed: ${error.message}
+`);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1540,
@@ -221,7 +261,8 @@ else {
 
   app.whenReady().then(() => {
     app.setName(APP_NAME);
-    app.setAppUserModelId("cn.jiduotong.feilin");
+    app.setAppUserModelId("cn.filmfactory.app");
+    migrateLegacyUserData();
     settingsFile = path.join(app.getPath("userData"), "settings.json");
     loadSettings();
     store = new SessionStore(path.join(app.getPath("userData"), "Edits"));
@@ -558,7 +599,7 @@ ipcMain.handle("export:full", async (_event, payload) => {
   const extension = isDi ? "dpx" : output.format === "jpeg" ? "jpg" : output.format === "tiff" ? "tif" : "png";
   const result = await dialog.showSaveDialog(mainWindow, {
     title: isDi ? "导出 Cineon 数字中间片" : "导出成片",
-    defaultPath: `${baseName}-几多筒菲林.${extension}`,
+    defaultPath: `${baseName}-菲林工厂.${extension}`,
     filters: [{ name: extension.toUpperCase(), extensions: [extension] }]
   });
   if (result.canceled || !result.filePath) return { canceled: true };
@@ -621,7 +662,7 @@ ipcMain.handle("export:preview", async (_event, payload) => {
   const match = /^data:image\/(png|jpeg);base64,(.+)$/.exec(payload.dataUrl || "");
   if (!match) throw new Error("导出数据无效");
   const extension = options.format === "jpeg" ? "jpg" : options.format === "tiff" ? "tif" : "png";
-  const suggestedName = payload.suggestedName || `几多筒菲林-视觉预览.${extension}`;
+  const suggestedName = payload.suggestedName || `菲林工厂-视觉预览.${extension}`;
   const result = await dialog.showSaveDialog(mainWindow, {
     title: "导出视觉预览（非光谱引擎成片）",
     defaultPath: suggestedName,

@@ -1,9 +1,10 @@
-# 几多筒菲林
+# 菲林工厂 · Film Factory
 
 Windows 上的光谱胶片与暗房工作台。界面是 Electron，成像由两部分组成：上游 SpektraLab 的
 81 波长 Vulkan 引擎（处理原生 RAW），以及本项目按上游源码逐行移植的本机管线（处理已解码图像，
 并负责场景宽容度、对比度蒙版、胶片边缘、日期后背、半格配对与 Cineon 数字中间片）。
 
+- 作者：Lau Hing Sheung
 - 许可证：GPL-3.0-or-later（`LICENSE`）
 - 上游：SpektraLab v1.3.3（`vendor/SpektraLab-1.3.3`，构建时获取）
 - 胶片/相纸档案：来自上游，CC BY-SA 4.0（`THIRD-PARTY-NOTICES.txt`）

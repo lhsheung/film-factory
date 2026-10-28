@@ -60,8 +60,8 @@ function writeDpx(options) {
   header.writeUInt32BE(0, 28);              // user header size
   pad(options.filename || "DI.dpx", 100).copy(header, 32);
   pad(timestamp(new Date()), 24).copy(header, 132);
-  pad(options.creator || "几多筒菲林", 100).copy(header, 156);
-  pad(options.project || "几多筒菲林 Cineon DI", 200).copy(header, 256);
+  pad(options.creator || "Lau Hing Sheung", 100).copy(header, 156);
+  pad(options.project || "菲林工厂 Cineon DI", 200).copy(header, 256);
   pad(options.copyright || "", 200).copy(header, 456);
   header.writeUInt32BE(0xffffffff, 660);    // encryption: none
 
