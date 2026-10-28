@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' media: data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' media:; font-src 'self'; object-src 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>几多筒菲林</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg class="svg-defs" aria-hidden="true"><defs>
+<symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12"/></symbol>
+<symbol id="i-folder" viewBox="0 0 20 20"><path d="M2.5 5.5h6l1.5 2h7.5v8.5h-15z"/></symbol>
+<symbol id="i-image" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="7.5" cy="7.5" r="1.2"/><path d="m4 15 4-4 3 3 2-2 3 3"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 20 20"><path d="M4 3v14M10 3v14M16 3v14M2 7h4M8 12h4M14 6h4"/></symbol>
+<symbol id="i-film" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="1"/><path d="M6 4v12M14 4v12M2 7h4M2 11h4M2 14h4M14 7h4M14 11h4M14 14h4"/></symbol>
+<symbol id="i-pair" viewBox="0 0 20 20"><rect x="2" y="4" width="7" height="12" rx="1"/><rect x="11" y="4" width="7" height="12" rx="1"/></symbol>
+<symbol id="i-export" viewBox="0 0 20 20"><path d="M10 13V2m-4 4 4-4 4 4M3 11v6h14v-6"/></symbol>
+<symbol id="i-settings" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2m0 12v2M2 10h2m12 0h2M4.3 4.3l1.4 1.4m8.6 8.6 1.4 1.4m0-11.4-1.4 1.4m-8.6 8.6-1.4 1.4"/></symbol>
+<symbol id="i-undo" viewBox="0 0 20 20"><path d="m7 5-4 4 4 4M3 9h8a5 5 0 0 1 5 5v2"/></symbol>
+<symbol id="i-redo" viewBox="0 0 20 20"><path d="m13 5 4 4-4 4m4-4H9a5 5 0 0 0-5 5v2"/></symbol>
+<symbol id="i-fit" viewBox="0 0 20 20"><path d="M3 8V3h5m4 0h5v5m0 4v5h-5m-4 0H3v-5"/></symbol>
+<symbol id="i-split" viewBox="0 0 20 20"><rect x="2.5" y="3" width="15" height="14" rx="2"/><path d="M10 3v14M7 8l-2 2 2 2m6-4 2 2-2 2"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 20 20"><path d="m7 5 5 5-5 5"/></symbol>
+<symbol id="i-check" viewBox="0 0 20 20"><path d="m4 10 4 4 8-9"/></symbol>
+<symbol id="i-close" viewBox="0 0 20 20"><path d="m5 5 10 10M15 5 5 15"/></symbol>
+</defs></svg>
+
+<header class="titlebar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+    <div><strong>几多筒菲林</strong><small>光谱暗房</small></div>
+  </div>
+  <button class="engine-pill" id="engine-pill" title="打开引擎设置"><span class="status-dot"></span><span id="engine-pill-text">正在检查引擎</span></button>
+  <div class="titlebar-space"></div>
+</header>
+
+<main class="workspace">
+  <aside class="library-panel">
+    <div class="panel-heading"><span>图库</span><span class="count" id="photo-count">0</span></div>
+    <button class="primary import-button" id="import-button"><svg><use href="#i-plus"/></svg>导入底片</button>
+    <label class="search"><svg><use href="#i-image"/></svg><input id="library-search" type="search" placeholder="搜索照片" aria-label="搜索照片"></label>
+    <div class="photo-list" id="photo-list">
+      <div class="library-empty" id="library-empty">RAW、TIFF、JPEG 或 PNG<br>也可以直接拖进来</div>
+    </div>
+    <div class="selection-tools" id="selection-tools" hidden>
+      <span id="selection-count">已选 1 张</span>
+      <button class="text-button" id="sync-button">同步设置</button>
+    </div>
+    <nav class="workflow-nav" aria-label="工作流">
+      <button data-open-tab="film" class="active"><svg><use href="#i-sliders"/></svg>显影与放相<svg class="chevron"><use href="#i-chevron"/></svg></button>
+      <button data-open-tab="edge"><svg><use href="#i-film"/></svg>胶片边缘<svg class="chevron"><use href="#i-chevron"/></svg></button>
+      <button data-open-tab="pair"><svg><use href="#i-pair"/></svg>半格配对<svg class="chevron"><use href="#i-chevron"/></svg></button>
+      <button data-open-tab="output"><svg><use href="#i-export"/></svg>导出与打样<svg class="chevron"><use href="#i-chevron"/></svg></button>
+    </nav>
+    <button class="engine-card" id="engine-card">
+      <span class="status-dot"></span>
+      <span><strong id="engine-card-title">光谱引擎未连接</strong><small id="engine-card-detail">界面与视觉预览可用</small></span>
+      <svg><use href="#i-settings"/></svg>
+    </button>
+  </aside>
+
+  <section class="stage">
+    <div class="stage-toolbar">
+      <div class="document-title"><strong id="document-name">未打开底片</strong><span id="save-state">本地工作区</span></div>
+      <div class="toolbar-actions">
+        <button class="icon-button" id="undo-button" title="撤销 Ctrl+Z" disabled><svg><use href="#i-undo"/></svg></button>
+        <button class="icon-button" id="redo-button" title="重做 Ctrl+Y" disabled><svg><use href="#i-redo"/></svg></button>
+        <span class="toolbar-divider"></span>
+        <button class="tool-button" id="compare-button" disabled><svg><use href="#i-split"/></svg>对照</button>
+        <button class="tool-button" id="demo-button">界面演示</button>
+      </div>
+    </div>
+
+    <div class="viewport" id="viewport">
+      <div class="drop-zone" id="drop-zone">
+        <div class="drop-illustration"><svg><use href="#i-film"/></svg></div>
+        <h1>把一筒菲林放上灯箱</h1>
+        <p>导入 RAW 开始光谱显影，或先用普通照片熟悉工作台。</p>
+        <button class="primary" id="empty-import">选择照片</button>
+        <small>原始文件不会被修改</small>
+      </div>
+      <div class="canvas-wrap" id="canvas-wrap" hidden>
+        <div class="image-stack" id="image-stack">
+          <img id="photo" alt="当前照片">
+          <img id="photo-before" alt="调整前照片" hidden>
+          <div class="edge-overlay" id="edge-overlay" hidden>
+            <div class="perforations top"></div><div class="perforations bottom"></div>
+            <span class="edge-print left" id="edge-stock-print">KODAK PORTRA 400</span>
+            <span class="edge-print right" id="edge-frame-number">01</span>
+            <span class="date-imprint" id="date-imprint" hidden>26 10 28</span>
+          </div>
+          <div class="pair-guide" id="pair-guide" hidden><span>A</span><span>B</span></div>
+          <div class="split-line" id="split-line" hidden></div>
+        </div>
+      </div>
+      <div class="preview-badge" id="preview-badge" hidden><span class="status-dot"></span><span id="preview-badge-text">视觉预览 · 非物理渲染</span></div>
+      <div class="render-progress" id="render-progress" hidden><span></span><strong>正在显影</strong></div>
+      <div class="zoom-tools">
+        <button id="fit-button" title="适合窗口 Ctrl+0"><svg><use href="#i-fit"/></svg></button>
+        <button id="zoom-out" title="缩小">−</button><span id="zoom-label">适合</span><button id="zoom-in" title="放大">+</button>
+        <button id="actual-button" title="实际像素 Ctrl+1">100%</button>
+      </div>
+    </div>
+
+    <div class="filmstrip-wrap">
+      <div class="filmstrip-meta"><span>底片夹</span><span id="filmstrip-hint">单击切换 · Ctrl 单击多选</span></div>
+      <div class="filmstrip" id="filmstrip"><button class="strip-add" id="strip-add"><svg><use href="#i-plus"/></svg></button></div>
+    </div>
+  </section>
+
+  <aside class="inspector">
+    <div class="inspector-tabs" role="tablist">
+      <button role="tab" data-tab="film" class="active">胶片</button>
+      <button role="tab" data-tab="latitude">宽容度</button>
+      <button role="tab" data-tab="print">相纸</button>
+      <button role="tab" data-tab="adjust">精修</button>
+      <button role="tab" data-tab="edge">边缘</button>
+      <button role="tab" data-tab="output">输出</button>
+    </div>
+    <div class="inspector-scroll">
+      <section class="tab-page active" data-page="film">
+        <div class="section-heading"><div><h2>胶片</h2></div><button class="text-button reset-section" data-section="film">还原</button></div>
+        <label class="field"><span>胶片型号</span><select id="film-stock" data-bind="film.stock"></select></label>
+        <div class="stock-note" id="stock-note">彩色负片 · 光谱特性由引擎配置决定</div>
+        <label class="field"><span>画幅</span><select id="film-format" data-bind="film.format"></select></label>
+        <div class="control-group"><h3>曝光与镜头</h3>
+          <label class="slider-row"><span>曝光</span><input type="range" min="-3" max="3" step="0.05" data-bind="film.exposure"><output></output></label>
+          <label class="slider-row"><span>色温</span><input type="range" min="2500" max="10000" step="50" data-bind="film.whiteBalance"><output></output></label>
+          <label class="slider-row"><span>色调</span><input type="range" min="-100" max="100" step="1" data-bind="film.tint"><output></output></label>
+          <label class="slider-row"><span>高光提升</span><input type="range" min="0" max="2" step="0.05" data-bind="film.boost"><output></output></label>
+          <label class="slider-row"><span>镜头柔化</span><input type="range" min="0" max="1" step="0.01" data-bind="film.lensBlur"><output></output></label>
+        </div>
+        <div class="control-group"><h3>乳剂</h3>
+          <label class="slider-row"><span>颗粒</span><input type="range" min="0" max="1" step="0.01" data-bind="film.grain"><output></output></label>
+          <label class="slider-row"><span>光晕</span><input type="range" min="0" max="1" step="0.01" data-bind="film.halation"><output></output></label>
+          <label class="slider-row"><span>眩光</span><input type="range" min="0" max="1" step="0.01" data-bind="film.glare"><output></output></label>
+        </div>
+        <label class="toggle-row"><span><strong>自动曝光</strong><small>中央重点测光</small></span><input type="checkbox" data-bind="film.autoExposure"><i></i></label>
+      </section>
+
+      <section class="tab-page" data-page="latitude">
+        <div class="section-heading"><div><h2>场景宽容度</h2></div><button class="text-button reset-section" data-section="latitude">还原</button></div>
+        <label class="toggle-row"><span><strong>启用宽容度映射</strong><small>以测光中间灰为 0 档，按 Cineon 风格滚降</small></span><input type="checkbox" data-bind="latitude.active"><i></i></label>
+        <label class="field"><span>测量量</span><select data-bind="latitude.norm"><option value="power">幂均值（默认）</option><option value="y">亮度 Y</option><option value="max">最大值</option></select></label>
+        <div class="control-group"><h3>高光端</h3>
+          <label class="slider-row"><span>起始档位</span><input type="range" min="-2" max="6" step="0.1" data-bind="latitude.highlightKnee"><output></output></label>
+          <label class="slider-row"><span>压缩空间</span><input type="range" min="0" max="4" step="0.05" data-bind="latitude.highlightRoom"><output></output></label>
+        </div>
+        <div class="control-group"><h3>阴影端</h3>
+          <label class="slider-row"><span>起始档位</span><input type="range" min="-6" max="2" step="0.1" data-bind="latitude.shadowKnee"><output></output></label>
+          <label class="slider-row"><span>提升空间</span><input type="range" min="0" max="4" step="0.05" data-bind="latitude.shadowRoom"><output></output></label>
+          <label class="slider-row"><span>提升上限</span><input type="range" min="0.25" max="8" step="0.05" data-bind="latitude.maxLift"><output></output></label>
+        </div>
+        <div class="control-group"><h3>滚降</h3>
+          <label class="slider-row"><span>阶数 m</span><input type="range" min="1" max="4" step="1" data-bind="latitude.rolloff"><output></output></label>
+        </div>
+        <label class="toggle-row"><span><strong>半格第二格独立曲线</strong><small>拼接画面从分界处以右/以下用第二套膝点</small></span><input type="checkbox" data-bind="latitude.bActive"><i></i></label>
+        <label class="slider-row"><span>分界位置</span><input type="range" min="0.1" max="0.9" step="0.01" data-bind="latitude.split"><output></output></label>
+        <div class="control-group" id="latitude-b-group">
+          <h3>第二格</h3>
+          <label class="slider-row"><span>高光起始</span><input type="range" min="-2" max="6" step="0.1" data-bind="latitude.bHighlightKnee"><output></output></label>
+          <label class="slider-row"><span>高光空间</span><input type="range" min="0" max="4" step="0.05" data-bind="latitude.bHighlightRoom"><output></output></label>
+          <label class="slider-row"><span>阴影起始</span><input type="range" min="-6" max="2" step="0.1" data-bind="latitude.bShadowKnee"><output></output></label>
+          <label class="slider-row"><span>阴影空间</span><input type="range" min="0" max="4" step="0.05" data-bind="latitude.bShadowRoom"><output></output></label>
+        </div>
+      </section>
+
+      <section class="tab-page" data-page="print">
+        <div class="section-heading"><div><h2>相纸</h2></div><button class="text-button reset-section" data-section="print">还原</button></div>
+        <label class="field"><span>相纸</span><select id="print-paper" data-bind="print.paper"></select></label>
+        <div class="control-group"><h3>放大机</h3>
+          <label class="slider-row"><span>放相曝光</span><input type="range" min="-3" max="3" step="0.05" data-bind="print.exposure"><output></output></label>
+          <label class="slider-row"><span>黄滤色片</span><input type="range" min="-100" max="100" step="1" data-bind="print.yellow"><output></output></label>
+          <label class="slider-row"><span>品红滤色片</span><input type="range" min="-100" max="100" step="1" data-bind="print.magenta"><output></output></label>
+          <label class="slider-row"><span>相纸反差</span><input type="range" min="-100" max="100" step="1" data-bind="print.contrast"><output></output></label>
+          <label class="slider-row"><span>相纸明度</span><input type="range" min="-100" max="100" step="1" data-bind="print.brightness"><output></output></label>
+        </div>
+        <div class="control-group"><h3>暗房效果</h3>
+          <label class="slider-row"><span>预闪</span><input type="range" min="0" max="1" step="0.01" data-bind="print.preFlash"><output></output></label>
+        </div>
+        <div class="control-group"><h3>对比度蒙版 · RFC-024</h3>
+          <label class="toggle-row"><span><strong>启用虚拟蒙版</strong><small>在预闪之前给像曝光一层中性空间增益</small></span><input type="checkbox" data-bind="contrastMask.active"><i></i></label>
+          <label class="slider-row"><span>提亮印刷高光</span><input type="range" min="-3" max="3" step="0.05" data-bind="contrastMask.highlights"><output></output></label>
+          <label class="slider-row"><span>压暗印刷阴影</span><input type="range" min="-3" max="3" step="0.05" data-bind="contrastMask.shadows"><output></output></label>
+          <label class="slider-row"><span>恒等核心宽度</span><input type="range" min="0" max="4" step="0.05" data-bind="contrastMask.core"><output></output></label>
+          <label class="slider-row"><span>基底层尺度</span><input type="range" min="0.005" max="0.2" step="0.005" data-bind="contrastMask.scale"><output></output></label>
+          <label class="slider-row"><span>增益上限</span><input type="range" min="0.5" max="8" step="0.1" data-bind="contrastMask.limit"><output></output></label>
+        </div>
+        <label class="toggle-row"><span><strong>放相效果</strong><small>眩光与预闪总开关</small></span><input type="checkbox" data-bind="print.effects"><i></i></label>
+      </section>
+
+      <section class="tab-page" data-page="adjust">
+        <div class="section-heading"><div><h2>精修</h2></div><button class="text-button reset-section" data-section="adjust">还原</button></div>
+        <div class="control-group"><h3>影调</h3>
+          <label class="slider-row"><span>曝光</span><input type="range" min="-3" max="3" step="0.05" data-bind="adjust.exposure"><output></output></label>
+          <label class="slider-row"><span>对比度</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.contrast"><output></output></label>
+          <label class="slider-row"><span>高光</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.highlights"><output></output></label>
+          <label class="slider-row"><span>阴影</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.shadows"><output></output></label>
+          <label class="slider-row"><span>饱和度</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.saturation"><output></output></label>
+          <label class="slider-row"><span>色温</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.temperature"><output></output></label>
+          <label class="slider-row"><span>色调</span><input type="range" min="-100" max="100" step="1" data-bind="adjust.tint"><output></output></label>
+        </div>
+        <div class="control-group"><h3>几何</h3>
+          <div class="segmented" id="rotation-control"><button data-rotation="0">0°</button><button data-rotation="90">90°</button><button data-rotation="180">180°</button><button data-rotation="270">270°</button></div>
+          <label class="slider-row"><span>拉直</span><input type="range" min="-45" max="45" step="0.1" data-bind="adjust.straighten"><output></output></label>
+          <div class="button-row"><button class="secondary" id="flip-h">水平翻转</button><button class="secondary" id="flip-v">垂直翻转</button></div>
+        </div>
+      </section>
+
+      <section class="tab-page" data-page="edge">
+        <div class="section-heading"><div><h2>胶片边缘</h2></div><button class="text-button reset-section" data-section="edge">还原</button></div>
+        <label class="toggle-row"><span><strong>渲染胶片边缘</strong><small>画布扩展为整条片带，按真实片门几何曝光</small></span><input type="checkbox" data-bind="edge.active"><i></i></label>
+        <label class="field"><span>片带模式</span><select data-bind="edge.mode"><option value="strip">整条片带（含齿孔）</option><option value="filed">只留一条齿边</option></select></label>
+        <label class="field"><span>片门形状</span><select data-bind="edge.gate"><option value="auto">自动（按机身种子）</option><option value="square">方角</option><option value="rounded">圆角</option><option value="eared">带耳</option><option value="shouldered">带肩</option><option value="kicked">翘角</option></select></label>
+        <label class="field"><span>齿孔外区域</span><select data-bind="edge.holes"><option value="white">白（扫描光）</option><option value="black">黑（黑背衬 / 放相）</option></select></label>
+        <label class="field"><span>片带外的载片台</span><select data-bind="edge.carrier"><option value="none">不显示</option><option value="black">黑</option><option value="open">扫描光</option></select></label>
+        <div class="control-group"><h3>片带身份</h3>
+          <label class="slider-row"><span>机身种子</span><input type="range" min="1" max="9999" step="1" data-bind="edge.cameraSeed"><output></output></label>
+          <label class="slider-row"><span>过片种子</span><input type="range" min="1" max="9999" step="1" data-bind="edge.frameSeed"><output></output></label>
+          <label class="slider-row"><span>画面编号</span><input type="range" min="0" max="99" step="1" data-bind="edge.frameNumber"><output></output></label>
+          <label class="slider-row"><span>光圈（片门半影）</span><input type="range" min="0" max="32" step="0.5" data-bind="edge.fNumber"><output></output></label>
+          <label class="field"><span>边缘印字</span><input type="text" maxlength="40" data-bind="edge.edgeText" placeholder="留空则用胶片型号"></label>
+        </div>
+        <div class="control-group"><h3>片基</h3>
+          <label class="slider-row"><span>片基灰雾</span><input type="range" min="0" max="2" step="0.01" data-bind="edge.fog"><output></output></label>
+          <label class="slider-row"><span>卷轴漏光</span><input type="range" min="0" max="1" step="0.01" data-bind="edge.leaks"><output></output></label>
+        </div>
+        <div class="control-group"><h3>日期后背 · RFC-031</h3>
+          <label class="toggle-row"><span><strong>曝光日期</strong><small>从背面打到负片上，只作用于红层</small></span><input type="checkbox" data-bind="edge.dateActive"><i></i></label>
+          <label class="field"><span>日期</span><input type="date" data-bind="edge.date"></label>
+          <label class="field"><span>字面</span><select data-bind="edge.dateStyle"><option value="lcd">七段 LCD</option><option value="dots">点阵</option><option value="data">拍摄数据 5×7</option></select></label>
+          <label class="field"><span>位置</span><select data-bind="edge.datePlacement"><option value="frame">画面内</option><option value="rebate">齿边 / 片间</option></select></label>
+          <label class="field"><span>角落</span><select data-bind="edge.dateCorner"><option value="br">右下</option><option value="bl">左下</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
+          <label class="slider-row"><span>字高</span><input type="range" min="0.4" max="3" step="0.05" data-bind="edge.dateSize"><output></output></label>
+          <label class="slider-row"><span>曝光（档）</span><input type="range" min="0" max="8" step="0.1" data-bind="edge.dateEv"><output></output></label>
+          <label class="slider-row"><span>横向内缩 mm</span><input type="range" min="0" max="20" step="0.1" data-bind="edge.insetX"><output></output></label>
+          <label class="slider-row"><span>纵向内缩 mm</span><input type="range" min="0" max="20" step="0.1" data-bind="edge.insetY"><output></output></label>
+        </div>
+      </section>
+
+      <section class="tab-page" data-page="pair">
+        <div class="section-heading"><div><h2>半格配对</h2></div><button class="text-button reset-section" data-section="pair">还原</button></div>
+        <label class="toggle-row"><span><strong>半格模式</strong><small>两次曝光落在同一条 18 × 24 片门上</small></span><input type="checkbox" data-bind="pair.active"><i></i></label>
+        <div class="field"><span>排列方向</span><div class="segmented" id="pair-orientation"><button data-value="horizontal">左右排列</button><button data-value="vertical">上下排列</button></div></div>
+        <div class="pair-slots"><button id="pair-slot-a" class="selected"><small>当前画面</small><strong>A</strong></button><button id="pair-slot-b"><small>待配对</small><strong>B</strong></button></div>
+        <label class="toggle-row"><span><strong>联动曝光</strong><small>保留各自白平衡与精修</small></span><input type="checkbox" data-bind="pair.linked"><i></i></label>
+        <label class="slider-row"><span>第二格分界</span><input type="range" min="0.1" max="0.9" step="0.01" data-bind="pair.split"><output></output></label>
+        <button class="secondary full-width" id="make-pair">将选中的两张照片配对</button>
+        
+      </section>
+
+      <section class="tab-page" data-page="output">
+        <div class="section-heading"><div><h2>输出</h2></div></div>
+        <div class="engine-output-card"><span class="status-dot"></span><div><strong id="output-engine-title">光谱引擎未连接</strong><p id="output-engine-copy">可导出视觉预览，物理显影需连接引擎。</p></div></div>
+        <button class="primary full-width" id="engine-render-button" disabled>运行光谱显影</button>
+        <div class="control-group"><h3>导出配方</h3>
+          <label class="field"><span>格式</span><select data-bind="output.format"><option value="png">PNG</option><option value="jpeg">JPEG</option><option value="tiff">TIFF 16 位</option></select></label>
+          <label class="field"><span>色彩空间</span><select data-bind="output.colorSpace"><option value="srgb">sRGB</option><option value="display-p3">Display P3</option><option value="rec2020">Rec. 2020</option><option value="prophoto">ProPhoto RGB</option></select></label>
+          <label class="field"><span>位深</span><select data-bind="output.bitDepth"><option value="8">8 位</option><option value="16">16 位</option></select></label>
+          <label class="slider-row"><span>最长边</span><input type="range" min="640" max="8192" step="128" data-bind="output.longEdge"><output></output></label>
+          <label class="slider-row"><span>JPEG 质量</span><input type="range" min="1" max="100" step="1" data-bind="output.quality"><output></output></label>
+        </div>
+        <label class="toggle-row"><span><strong>Cineon 数字中间片</strong><small>RFC-028 · 10 位对数 DPX，黑 95 / 白 685</small></span><input type="checkbox" data-bind="output.di"><i></i></label>
+        <label class="toggle-row"><span><strong>导出前软打样</strong><small>在画布上按当前色彩空间预览</small></span><input type="checkbox" data-bind="output.softProof"><i></i></label>
+        <button class="primary full-width" id="export-button" disabled>导出成片</button>
+        <button class="secondary full-width" id="export-engine-button" hidden>导出光谱成片 TIFF</button>
+        
+      </section>
+    </div>
+  </aside>
+</main>
+
+<dialog id="settings-dialog" class="sheet">
+  <form method="dialog" class="sheet-heading"><div><h2>引擎与自动化</h2></div><button class="icon-button" value="cancel" aria-label="关闭"><svg><use href="#i-close"/></svg></button></form>
+  <div class="sheet-body">
+    <section><h3>SpektraLab 引擎</h3><p class="setting-description">选择已构建的宿主与 <code>resources</code>，应用不下载引擎。</p>
+      <div class="engine-banner" id="engine-banner"><span class="status-dot"></span><span id="engine-banner-text">正在检查引擎…</span></div>
+      <div class="engine-actions">
+        <button class="primary" id="engine-autodetect" type="button">自动检测</button>
+        <button class="secondary" id="engine-import" type="button">导入引擎文件夹</button>
+        <button class="secondary" id="engine-build" type="button">用源码构建</button>
+      </div>
+      <p class="setting-description" id="engine-action-hint">自动检测会查 build/windows；也可导入任意含 spk_raw_render.exe 与 resources 的文件夹。</p>
+
+      <div class="diagnostic-list" id="diagnostic-list"></div>
+
+      <details class="manual-paths"><summary>手动指定路径</summary>
+        <div class="path-setting"><span id="host-path">未选择引擎宿主</span><button class="secondary" id="choose-host" type="button">选择程序</button></div>
+        <div class="path-setting"><span id="resources-path">未选择资源目录</span><button class="secondary" id="choose-resources" type="button">选择目录</button></div>
+      </details>
+
+      <pre class="build-log" id="build-log" hidden></pre>
+      <div class="capability-list" id="capability-list"></div>
+    </section>
+    <section><h3>CLI 与 MCP</h3><div class="automation-row"><span>本地命令行</span><span class="tag">已实现 · 需手动运行</span></div><div class="automation-row"><span>MCP server（stdio）</span><span class="tag">已实现 · 默认关闭</span></div><div class="automation-copy"><code>bin\jdtfl.js capabilities --engine-host &lt;exe&gt; --engine-resources &lt;dir&gt;</code><code>bin\jdtfl.js render --input &lt;RAW&gt; --params params.json --output out.tif</code><code>bin\jdtfl.js mcp</code></div></section>
+    <section><h3>界面</h3><label class="toggle-row"><span><strong>减少动态效果</strong><small>也遵循 Windows 系统设置</small></span><input type="checkbox" id="reduced-motion"><i></i></label></section>
+  </div>
+</dialog>
+
+<div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
+<script src="../src/shared/params.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

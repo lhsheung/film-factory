@@ -1,0 +1,40 @@
+几多筒菲林 (JiDuo Tong FeiLin) — third-party notices
+=====================================================
+
+This application is an independent Windows front end for the open-source
+SpektraLab / spektrafilm film and print model. It does not bundle the macOS
+application or the film profiles. When you connect a locally built Windows
+engine, that engine and the profiles it loads remain under their own licences.
+
+Upstream project
+----------------
+SpektraLab, Copyright James Qiu and contributors
+https://github.com/JamesQiu2005/SpektraLab
+Licence: GPL-3.0-or-later (app and engine). Full text: licenses/GPL-3.0.txt
+
+Film process model and measured profiles
+----------------------------------------
+spektrafilm, Andrea Volpato
+https://github.com/andreavolpato/spektrafilm
+Film and paper profiles and print LUTs: CC BY-SA 4.0.
+Full text: licenses/CC-BY-SA-4.0.txt
+
+Electron
+--------
+Copyright OpenJS Foundation and Electron contributors.
+Licence: MIT. https://github.com/electron/electron
+
+sharp / libvips
+---------------
+sharp: Copyright Lovell Fuller and contributors, Apache-2.0.
+libvips: Copyright John Cupitt and contributors, LGPL-2.1-or-later.
+https://github.com/lovell/sharp
+
+@electron/packager
+------------------
+Copyright Electron contributors. Licence: BSD-2-Clause.
+https://github.com/electron/packager
+
+No upstream source files, film profiles, print LUTs or baked constants are
+copied into this repository. The engine bridge invokes a user-supplied
+spk_raw_render.exe as a separate process.

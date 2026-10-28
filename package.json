@@ -1,0 +1,31 @@
+{
+  "name": "jiduo-tong-feilin",
+  "productName": "几多筒菲林",
+  "version": "0.1.0",
+  "description": "几多筒菲林 — Windows 光谱胶片与暗房工作台",
+  "main": "src/main.js",
+  "bin": {
+    "jdtfl": "bin/jdtfl.js"
+  },
+  "license": "GPL-3.0-or-later",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "test": "node --test tests/params.test.js tests/session-store.test.js tests/engine.test.js tests/automation.test.js tests/imaging.test.js",
+    "capture": "electron . --capture",
+    "cli": "node bin/jdtfl.js",
+    "mcp": "node src/mcp-server.js",
+    "package:win": "node scripts/package.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^45.0.0"
+  },
+  "dependencies": {
+    "sharp": "^0.35.5"
+  }
+}
