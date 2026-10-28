@@ -32,7 +32,7 @@ const ui = {
   engine: { available: false, capabilities: {} },
   activeTab: "film", compare: false, zoom: 1,
   interactionSnapshot: null, saveTimer: null, loadingToken: 0,
-  rendering: false
+  rendering: false, developing: false
 };
 
 function currentPhoto() { return ui.photos.find((photo) => photo.id === ui.currentId) || null; }
@@ -152,7 +152,7 @@ function applyPreview() {
     : local
       ? `本机成像管线${photo.localSize ? ` · ${photo.localSize}` : ""}`
       : undecodable
-        ? "原生 RAW · 需要连接光谱引擎解码"
+        ? (ui.developing ? "正在显影 · 光谱引擎" : "原生 RAW · 需要连接光谱引擎解码")
         : "视觉预览 · 正在渲染";
 }
 
@@ -242,6 +242,8 @@ async function runLocalRender() {
   if (photo.raw && !ui.state.pair.active) return;
   if (ui.localBusy) { ui.localPending = true; return; }
   ui.localBusy = true;
+  ui.developing = Boolean(photo.raw);
+  if (ui.developing) applyPreview();
   const token = ++ui.localToken;
   const state = clone(ui.state);
   try {
@@ -263,6 +265,7 @@ async function runLocalRender() {
     applyPreview();
   } finally {
     ui.localBusy = false;
+    ui.developing = false;
     if (ui.localPending) { ui.localPending = false; scheduleLocalRender(80); }
   }
 }
@@ -688,6 +691,7 @@ async function applyPreferences() {
 async function runEngineRender(photo) {
   if (!photo || ui.rendering || !ui.engine.available) return;
   ui.rendering = true;
+  ui.developing = true;
   $("#render-progress").hidden = false;
   updateExportState();
   try {
@@ -702,7 +706,9 @@ async function runEngineRender(photo) {
     toast(error.message, "error");
   } finally {
     ui.rendering = false;
+    ui.developing = false;
     $("#render-progress").hidden = true;
+    applyPreview();
     updateExportState();
   }
 }
